@@ -84,6 +84,7 @@ class TensorBackend:
         self.relu_back_zip = ops.zip(operators.relu_back)
         self.log_back_zip = ops.zip(operators.log_back)
         self.inv_back_zip = ops.zip(operators.inv_back)
+        self.sigmoid_back_zip = ops.zip(operators.sigmoid_back)
 
         # Reduce
         self.add_reduce = ops.reduce(operators.add, 0.0)
@@ -205,7 +206,7 @@ class SimpleOps(TensorOps):
         Returns:
             :class:`TensorData` : new tensor
         """
-        f = tensor_reduce(fn)
+        f = tensor_reduce(fn, start)
 
         def ret(a: "Tensor", dim: int) -> "Tensor":
             out_shape = list(a.shape)
@@ -265,7 +266,14 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        out_index = [0] * len(out_shape)
+        in_index = [0] * len(in_shape)
+        for ord in range(int(operators.prod(out_shape))):
+            to_index(ord, out_shape, out_index)
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            in_pos = index_to_position(in_index, in_strides)
+            out_pos = index_to_position(out_index, out_strides)
+            out[out_pos] = fn(in_storage[in_pos])
 
     return _map
 
@@ -310,13 +318,23 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        a_index = [0] * len(a_shape)
+        b_index = [0] * len(b_shape)
+        out_index = [0] * len(out_shape)
+        for ord in range(int(operators.prod(out_shape))):
+            to_index(ord, out_shape, out_index)
+            broadcast_index(out_index, out_shape, a_shape, a_index)
+            broadcast_index(out_index, out_shape, b_shape, b_index)
+            a_pos = index_to_position(a_index, a_strides)
+            b_pos = index_to_position(b_index, b_strides)
+            out_pos = index_to_position(out_index, out_strides)
+            out[out_pos] = fn(a_storage[a_pos], b_storage[b_pos])
 
     return _zip
 
 
 def tensor_reduce(
-    fn: Callable[[float, float], float]
+    fn: Callable[[float, float], float], start: float = 0.0
 ) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides, int], None]:
     """
     Low-level implementation of tensor reduce.
@@ -341,7 +359,19 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        a_index = [0] * len(a_shape)
+        out_index = [0] * len(out_shape)
+        for ord in range(int(operators.prod(out_shape))):
+            to_index(ord, out_shape, out_index)
+            res = start
+            for r in range(a_shape[reduce_dim]):
+                for i in range(len(a_shape)):
+                    a_index[i] = out_index[i]
+                a_index[reduce_dim] = r
+                a_pos = index_to_position(a_index, a_strides)
+                res = fn(res, a_storage[a_pos])
+            out_pos = index_to_position(out_index, out_strides)
+            out[out_pos] = res
 
     return _reduce
 

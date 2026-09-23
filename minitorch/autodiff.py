@@ -3,6 +3,8 @@ from typing import Any, Iterable, List, Tuple
 
 from typing_extensions import Protocol
 
+from collections import defaultdict
+
 # ## Task 1.1
 # Central Difference calculation
 
@@ -23,7 +25,11 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
     # TODO: Implement for Task 1.1.
-    raise NotImplementedError('Need to implement for Task 1.1')
+    plus = list(vals)
+    minus = list(vals)
+    plus[arg] += epsilon
+    minus[arg] -= epsilon
+    return (f(*plus) - f(*minus))/(2 * epsilon)
 
 
 variable_count = 1
@@ -62,7 +68,21 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+def topological_sort(variable):
+    sorted_nodes = []
+    visited = set()
+
+    def visit(node):
+        if node in visited:
+            return
+        visited.add(node)
+        if node.history is not None:
+            for input in node.history.inputs:
+                visit(input)
+        sorted_nodes.append(node)
+
+    visit(variable)
+    return list(reversed(sorted_nodes))
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -77,8 +97,16 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
-
+    derivs = defaultdict(float)
+    derivs[variable] = deriv
+    sorted_nodes = topological_sort(variable)
+    for node in sorted_nodes:
+        dx = derivs[node]
+        if node.is_leaf():
+            node.accumulate_derivative(dx)
+        else:
+            for x, local in node.chain_rule(dx):
+                derivs[x] += local
 
 @dataclass
 class Context:

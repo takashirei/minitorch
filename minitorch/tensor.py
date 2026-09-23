@@ -169,6 +169,8 @@ class Tensor:
     def __eq__(self, b: TensorLike) -> Tensor:  # type: ignore[override]
         return EQ.apply(self, self._ensure_tensor(b))
 
+    __hash__ = object.__hash__ 
+
     def __gt__(self, b: TensorLike) -> Tensor:
         return LT.apply(self._ensure_tensor(b), self)
 
@@ -350,7 +352,8 @@ class Tensor:
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple[Variable, Any]]:
         h = self.history
-        assert h is not None
+        if h is None:
+            return []
         assert h.last_fn is not None
         assert h.ctx is not None
 
