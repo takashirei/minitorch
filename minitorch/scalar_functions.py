@@ -112,6 +112,7 @@ class Mul(ScalarFunction):
         (a, b) = ctx.saved_values
         return (b * d_output, a * d_output)
 
+
 class Inv(ScalarFunction):
     "Inverse function"
 
@@ -120,7 +121,6 @@ class Inv(ScalarFunction):
         # TODO: Implement for Task 1.2.
         ctx.save_for_backward(a)
         return 1.0 / a
-
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:

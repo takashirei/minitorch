@@ -166,7 +166,6 @@ class Exp(Function):
         return t1.f.exp_map(t1) * grad_output
 
 
-
 class Sum(Function):
     @staticmethod
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
@@ -217,6 +216,7 @@ class IsClose(Function):
     def forward(ctx: Context, a: Tensor, b: Tensor) -> Tensor:
         # TODO: Implement for Task 2.3.
         return a.f.is_close_zip(a, b)
+
 
 class Permute(Function):
     @staticmethod

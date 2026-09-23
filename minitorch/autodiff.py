@@ -29,7 +29,7 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
     minus = list(vals)
     plus[arg] += epsilon
     minus[arg] -= epsilon
-    return (f(*plus) - f(*minus))/(2 * epsilon)
+    return (f(*plus) - f(*minus)) / (2 * epsilon)
 
 
 variable_count = 1
@@ -68,7 +68,6 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-def topological_sort(variable):
     sorted_nodes = []
     visited = set()
 
@@ -107,6 +106,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
         else:
             for x, local in node.chain_rule(dx):
                 derivs[x] += local
+
 
 @dataclass
 class Context:

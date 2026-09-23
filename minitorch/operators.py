@@ -55,7 +55,7 @@ def max(x: float, y: float) -> float:
 def is_close(x: float, y: float) -> float:
     "$f(x) = |x - y| < 1e-2$"
     # TODO: Implement for Task 0.1.
-    return 1.0 if abs(x-y) < 1e-2 else 0.0
+    return 1.0 if abs(x - y) < 1e-2 else 0.0
 
 
 def sigmoid(x: float) -> float:
@@ -122,6 +122,7 @@ def relu_back(x: float, d: float) -> float:
     r"If $f = relu$ compute $d \times f'(x)$"
     # TODO: Implement for Task 0.1.
     return d * (x > 0)
+
 
 def sigmoid_back(x: float, d: float) -> float:
     s = sigmoid(x)
@@ -199,11 +200,11 @@ def reduce(
     """
     # TODO: Implement for Task 0.3.
     def _reduce(ls: Iterable[float]) -> float:
-            res = start
-            for x in ls:
-                res = fn(x, res)
-            return res
-    
+        res = start
+        for x in ls:
+            res = fn(x, res)
+        return res
+
     return _reduce
 
 

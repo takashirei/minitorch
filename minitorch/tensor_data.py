@@ -49,6 +49,7 @@ def index_to_position(index: Index, strides: Strides) -> int:
         pos += i * s
     return pos
 
+
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
     """
     Convert an `ordinal` to an index in the `shape`.
@@ -93,7 +94,7 @@ def broadcast_index(
         if dim == 1:
             out_index[i] = 0
         else:
-            out_index[i] = big_index[i + off] 
+            out_index[i] = big_index[i + off]
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -124,7 +125,6 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         else:
             raise IndexingError()
     return tuple(reversed(res))
-
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
